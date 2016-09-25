@@ -4,8 +4,10 @@ import com.jmgits.sample.twilio.view.PortfolioDetail;
 import com.jmgits.sample.twilio.view.PortfolioValue;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by javi.more.garc on 25/09/16.
@@ -23,29 +25,32 @@ public class MessageBodySupport {
         return RESP_GENERAL_ERROR;
     }
 
-    public String generateErrorUnknownCommandBody(List<String> commands){
+    public String generateErrorUnknownCommandBody(List<String> commands) {
         return String.format(RESP_ERROR_UNKNOWN_COMMAND, commands);
     }
 
     public String generateMarketValueMessageBody(PortfolioDetail portfolioDetail) {
 
-        PortfolioValue value = portfolioDetail.getMarketValue();
+        PortfolioValue portfolioValue = portfolioDetail.getMarketValue();
 
-        return transform(RESP_PORTFOLIO_DETAIL_MARKET_VALUE, value);
+        return transform(RESP_PORTFOLIO_DETAIL_MARKET_VALUE, portfolioValue.getValue());
     }
 
     public String generateBookValueMessageBody(PortfolioDetail portfolioDetail) {
 
-        PortfolioValue value = portfolioDetail.getBookValue();
+        BigDecimal amount = Optional.ofNullable(portfolioDetail.getBookValue()).isPresent() ?
+                portfolioDetail.getBookValue().getValue() :
+                portfolioDetail.getMarketValue().getValue().subtract(portfolioDetail.getGainLoss().getValue());
 
-        return transform(RESP_PORTFOLIO_DETAIL_BOOK_VALUE, value);
+        return transform(RESP_PORTFOLIO_DETAIL_BOOK_VALUE, amount);
     }
 
     //
     // private methods
 
-    private String transform(String template, PortfolioValue value) {
-        String amountStr = value.getValue().setScale(2, RoundingMode.HALF_UP).toString();
+    private String transform(String template, BigDecimal amount) {
+
+        String amountStr = amount.setScale(2, RoundingMode.HALF_UP).toString();
 
         return String.format(template, amountStr);
     }

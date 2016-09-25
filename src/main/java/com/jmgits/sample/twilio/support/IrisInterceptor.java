@@ -23,7 +23,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
  */
 public class IrisInterceptor implements ClientHttpRequestInterceptor {
 
-    public static final Long TOKEN_EXPIRY_IN_MINUTES = 30l;
+    public static final Long TOKEN_EXPIRY_IN_MINUTES = 15L;
     public static final String PATH_LOGIN = "api/authentication/login?lang=ENGLISH&tenant=DFS&gateway=g3&userType=INVESTOR";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IrisInterceptor.class);

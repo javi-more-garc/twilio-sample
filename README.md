@@ -17,18 +17,31 @@ We're initially checking that the SMS body contains a certain message body (aka 
 
 Initially we support these commands:
 
-* Give me my account balance
-* How much money have I invested
+* What is the value of my portfolio?
+* How much money have I invested?
  
 If we receive any of them, we connect with IRIS (through REST) and send to the enduser a TwiML response with the portfolio details:
 
 ```
  <Response>
    <Message>
-     <Body>Total market value: 150428.24 (CANADIAN_DOLLAR), Gain/ loss: 60146.67 (CANADIAN_DOLLAR)</Body>
+     <Body>The total market value of your portfolio is $150428.24.
+           Thank You. UNIVERIS
+      </Body>
    </Message>
  </Response>
 ``` 
+
+```
+ <Response>
+   <Message>
+     <Body>You have invested $150428.24 to date.
+           Thank You. UNIVERIS
+      </Body>
+   </Message>
+ </Response>
+``` 
+
 
 Otherwise, we just send a TwiML response saying we don't know the command requested:
 

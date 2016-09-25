@@ -58,12 +58,12 @@ public class InvestorRestControllerTest {
 
         given(mockInvestorService.getPortfolioDetail("myNumber")).willReturn(portfolioDetail);
 
-        given(mockMessageBodySupport.generateMessageBody(portfolioDetail)).willReturn("Test body");
+        given(mockMessageBodySupport.generateMarketValueMessageBody(portfolioDetail)).willReturn("Test body");
 
         //
         // perform
 
-        mockMvc.perform(post("/api/v1/investor/sms?From=myNumber&Body=Give me my account balance")
+        mockMvc.perform(post("/api/v1/investor/sms?From=myNumber&Body=What is the value of my portfolio?")
                 .contentType(APPLICATION_XHTML_XML)) //
                 .andDo(print()) //
                 .andExpect(status().is2xxSuccessful())
@@ -105,7 +105,7 @@ public class InvestorRestControllerTest {
         //
         // perform
 
-        mockMvc.perform(post("/api/v1/investor/sms?From=myNumber&Body=Give me my account balance")
+        mockMvc.perform(post("/api/v1/investor/sms?From=myNumber&Body=What is the value of my portfolio?")
                 .contentType(APPLICATION_XHTML_XML)) //
                 .andDo(print()) //
                 .andExpect(status().is2xxSuccessful())

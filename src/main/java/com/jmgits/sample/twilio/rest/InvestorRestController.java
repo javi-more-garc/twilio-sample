@@ -22,7 +22,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/api/v1/investor")
 public class InvestorRestController {
 
-    private static List<String> REQ_PORTFOLIO_DETAIL_COMMANDS = asList("Give me my account balance", "How much money have I invested");
+    private static final String MARKET_VALUE = "What is the value of my portfolio?";
+    private static final String BOOK_VALUE = "How much have I invested?";
+
+    private static List<String> REQ_PORTFOLIO_DETAIL_COMMANDS = asList(MARKET_VALUE, BOOK_VALUE);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvestorRestController.class);
 
@@ -41,7 +44,9 @@ public class InvestorRestController {
 
         PortfolioDetail portfolioDetail = investorService.getPortfolioDetail(from);
 
-        String messageBody = messageBodySupport.generateMessageBody(portfolioDetail);
+        String messageBody = MARKET_VALUE.equals(body) ?
+                messageBodySupport.generateMarketValueMessageBody(portfolioDetail) :
+                messageBodySupport.generateBookValueMessageBody(portfolioDetail);
 
         return TwiMLUtil.messagingResponse(messageBody);
     }

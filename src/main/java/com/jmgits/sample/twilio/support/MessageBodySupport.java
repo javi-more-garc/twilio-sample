@@ -4,10 +4,8 @@ import com.jmgits.sample.twilio.view.PortfolioDetail;
 import com.jmgits.sample.twilio.view.PortfolioValue;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
+import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Created by javi.more.garc on 25/09/16.
@@ -18,9 +16,8 @@ public class MessageBodySupport {
     private static String RESP_GENERAL_ERROR = "A general error occurred. Please,try later...";
     private static String RESP_ERROR_UNKNOWN_COMMAND = "Unknown command. Commands available: %s";
 
-    private static String RESP_PORTFOLIO_DETAIL_MARKET_VALUE = "Total market value: %s (%s)";
-    private static String RESP_PORTFOLIO_DETAIL_GAIN_LOSS = "Gain/ loss: %s (%s)";
-    private static String RESP_PORTFOLIO_DETAIL_BOOK_VALUE = "Book value: %s (%s)";
+    private static String RESP_PORTFOLIO_DETAIL_MARKET_VALUE = "The total market value of your portfolio is $%s.\nThank You. UNIVERIS";
+    private static String RESP_PORTFOLIO_DETAIL_BOOK_VALUE = "You have invested $%s to date.\nThank You. UNIVERIS";
 
     public String generateGeneralErrorBody() {
         return RESP_GENERAL_ERROR;
@@ -30,27 +27,27 @@ public class MessageBodySupport {
         return String.format(RESP_ERROR_UNKNOWN_COMMAND, commands);
     }
 
-    public String generateMessageBody(PortfolioDetail portfolioDetail) {
+    public String generateMarketValueMessageBody(PortfolioDetail portfolioDetail) {
 
-        PortfolioValue marketValue = portfolioDetail.getMarketValue();
-        PortfolioValue gainLoss = portfolioDetail.getGainLoss();
-        PortfolioValue bookValue = portfolioDetail.getBookValue();
+        PortfolioValue value = portfolioDetail.getMarketValue();
 
-        List<String> items = new ArrayList<>();
+        return transform(RESP_PORTFOLIO_DETAIL_MARKET_VALUE, value);
+    }
 
-        Optional.ofNullable(marketValue).ifPresent(value -> items.add(transform(RESP_PORTFOLIO_DETAIL_MARKET_VALUE, value)));
-        Optional.ofNullable(gainLoss).ifPresent(value -> items.add(transform(RESP_PORTFOLIO_DETAIL_GAIN_LOSS, value)));
-        Optional.ofNullable(bookValue).ifPresent(value -> items.add(transform(RESP_PORTFOLIO_DETAIL_BOOK_VALUE, value)));
+    public String generateBookValueMessageBody(PortfolioDetail portfolioDetail) {
 
-        return items.stream().collect(Collectors.joining(", "));
+        PortfolioValue value = portfolioDetail.getBookValue();
 
+        return transform(RESP_PORTFOLIO_DETAIL_BOOK_VALUE, value);
     }
 
     //
     // private methods
 
     private String transform(String template, PortfolioValue value) {
-        return String.format(template, value.getValue().setScale(2, java.math.RoundingMode.HALF_UP).toString(), value.getCurrency());
+        String amountStr = value.getValue().setScale(2, RoundingMode.HALF_UP).toString();
+
+        return String.format(template, amountStr);
     }
 
 }
